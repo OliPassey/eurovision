@@ -12,4 +12,5 @@ mongodb <br />
 php 8.1 <br />
 working webserver <br />
 composer install  <br />
-purple is the only option. <br />
+update "mongodb://10.0.3.12:27017" to reflect your server in submit_vote.php & view_results.php <br />
+purple is the way forward. <br />
