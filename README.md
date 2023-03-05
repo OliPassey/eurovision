@@ -9,4 +9,5 @@ Images may need renaming to include _'s for two word countries ie esc_unitedking
 ![image](https://user-images.githubusercontent.com/7745805/222980324-f1ffaac0-62cc-46fa-8c7e-7e0025c8995d.png)
 
 requires mongodb
+composer install 
 purple is the only option.
