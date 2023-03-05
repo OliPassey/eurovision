@@ -2,6 +2,13 @@
     text-align: center;
   }
   
+.flags img {
+    object-fit: cover;
+    height: 155px;
+}
+.country-name {
+    font-size: 3em;
+}
 
 body {
     background-color: #404266;
@@ -9,7 +16,7 @@ body {
     font-family: Arial, sans-serif;
     font-size: 18px;
   }
-  
+
   table {
     margin: auto;
   }
@@ -20,7 +27,7 @@ body {
   }
   
   th {
-    background-color: #ccc;
+    background-color: rgb(71, 9, 90);
   }
   
   img {
