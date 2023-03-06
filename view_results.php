@@ -8,7 +8,26 @@
 	<img src="img/ESC2023_Ukraine_LIVERPOOL_RGB_White_600px.png" width="600">
 </div>
 <body class="dark-mode">
-    
+<script>
+		var autoRefresh = true;
+
+		function toggleAutoRefresh() {
+			autoRefresh = !autoRefresh;
+			document.getElementById("autoRefreshButton").textContent = autoRefresh ? "Turn off auto-refresh" : "Turn on auto-refresh";
+		}
+
+		function checkAutoRefresh() {
+			if (autoRefresh) {
+				setTimeout(function() {
+					location.reload();
+				}, 5000);
+			}
+		}
+
+		setInterval(checkAutoRefresh, 5000);
+	</script>
+
+	<button id="autoRefreshButton" onclick="toggleAutoRefresh()">Turn off auto-refresh</button>
 	<h2>Who has voted:</h2>
 	<?php
 	// Get the MongoDB connection
@@ -84,7 +103,7 @@ uasort($votesByCountry, function($a, $b) {
     return $b['votes'] - $a['votes'];
 });
 	// Display the top three positions with flags
-	echo '<div class="center">';
+	echo '<div class="top-results">';
     echo '<div class="top-3">';
 	echo '<div class="top-3-item">';
 	if (count($votesByCountry) > 0) {
@@ -142,30 +161,11 @@ uasort($votesByCountry, function($a, $b) {
         ?>
 	</table>
 	
-	<script>
-		var autoRefresh = true;
-
-		function toggleAutoRefresh() {
-			autoRefresh = !autoRefresh;
-			document.getElementById("autoRefreshButton").textContent = autoRefresh ? "Turn off auto-refresh" : "Turn on auto-refresh";
-		}
-
-		function checkAutoRefresh() {
-			if (autoRefresh) {
-				setTimeout(function() {
-					location.reload();
-				}, 5000);
-			}
-		}
-
-		setInterval(checkAutoRefresh, 5000);
-	</script>
-
-	<button id="autoRefreshButton" onclick="toggleAutoRefresh()">Turn off auto-refresh</button>
+	
     </body>
     </html>
 <?php
     echo '</div>';
 } else {
-    echo '<style>.center { display: none; }</style>';
+    echo '<style>.top-results { display: none; }</style>';
 }
