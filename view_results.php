@@ -5,7 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <div class="center">
-	<img src="img/ESC2023_Ukraine_LIVERPOOL_RGB_White_600px.png" width="600">
+	<img src="img/ESC2023_Ukraine_LIVERPOOL_RGB_White_600px.png" width="700">
 </div>
 <body class="dark-mode">
 <script>
@@ -26,7 +26,10 @@
 
 		setInterval(checkAutoRefresh, 5000);
 	</script>
-
+    <div class="scan2vote">
+    <h1>Scan to Vote</h1>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://eurovision.olipassey.me.uk/"> </br>
+    </div><br>
 	<button id="autoRefreshButton" onclick="toggleAutoRefresh()">Turn off auto-refresh</button>
 	<h2>Who has voted:</h2>
 	<?php
@@ -76,7 +79,7 @@ if ($hasVotes) {
 
 // Group votes by country
 $votesByCountry = array();
-$csv = array_map('str_getcsv', file('countries.csv'));
+$csv = array_map('str_getcsv', file('songs.csv'));
 array_shift($csv);
 foreach ($csv as $row) {
     $countryName = $row[0];

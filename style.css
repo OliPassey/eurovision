@@ -1,85 +1,188 @@
 .center {
-    text-align: center;
-  }
-  
+  text-align: center;
+}
+.scan2vote {
+  text-align: center;
+}
+
+.scan2vote img {
+  width: 250px;
+  height: 250px;
+}
+
 .flags img {
-    object-fit: cover;
-    height: 155px;
+  object-fit: cover;
+  height: 155px;
 }
 .country-name {
-    font-size: 3em;
+  font-size: 3em;
 }
 
 body {
-    background-color: #404266;
-    color: #fff;
-    font-family: Arial, sans-serif;
-    font-size: 18px;
+  background-color: #404266;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 30px;
+}
+
+table {
+  width: 100%; /* Add this to make the table take up the full width */
+  margin: auto;
+  font-size: 30px;
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+}
+
+th {
+  background-color: rgb(71, 9, 90);
+}
+
+img {
+  vertical-align: middle;
+}
+
+label {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 30px;
+}
+
+select {
+  width: 100px;
+  text-align-last: center;
+  border-radius: 4pc;
+  height: 40px;
+  font-size: large;
+}
+
+table {
+  margin: 0 auto;
+}
+
+form {
+  margin: 0 auto;
+}
+
+input[type="text"], input[type="password"], textarea {
+  background-color: #8f92bd;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 18px;
+  padding: 10px;
+  border-color: #fff;
+}
+
+input[type="submit"], button {
+  background-color: #6c63ff;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 10px;
+}
+
+input[type="submit"]:hover, button:hover {
+  background-color: #534ec5;
+}
+
+input[type="submit"]:active, button:active {
+  background-color: #3d38a6;
+}
+
+@media screen and (max-width: 480px) {
+  body {
+      font-size: 18px;
   }
 
   table {
-    margin: auto;
+      font-size: 18px;
   }
-  
+
   th, td {
-    padding: 10px;
-    text-align: center;
+      padding: 5px;
   }
-  
-  th {
-    background-color: rgb(71, 9, 90);
+
+  .flags img {
+      height: 100px;
   }
-  
-  img {
-    vertical-align: middle;
+
+  .country-name {
+      font-size: 2em;
   }
-  
-  label {
-    display: inline-block;
-    vertical-align: middle;
-  }
-  
-  select {
-    width: 100px;
-    text-align-last: center;
-    border-radius: 4pc;
-    height: 40px;
-    font-size: large;
+
+  .voting-table img {
+    max-width: 100px;
 }
-  
-  table {
-    margin: 0 auto;
-  }
-  
-  form {
-    margin: 0 auto;
-  }
-  
-  input[type="text"], input[type="password"], textarea {
-    background-color: #8f92bd;
-    border: none;
-    border-radius: 5px;
-    color: #fff;
-    font-size: 18px;
-    padding: 10px;
-    border-color: #fff;
-  }
-  
-  input[type="submit"], button {
-    background-color: #6c63ff;
-    border: none;
-    border-radius: 5px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 18px;
-    padding: 10px;
-  }
-  
-  input[type="submit"]:hover, button:hover {
-    background-color: #534ec5;
-  }
-  
-  input[type="submit"]:active, button:active {
-    background-color: #3d38a6;
-  }
-  
+}
+
+.voting-table {
+  width: 100%;
+}
+
+.voting-table img {
+  width: 100%;
+  max-width: 175px;
+}
+
+.voting-table select {
+  width: 100%;
+  max-width: 100px;
+}
+
+.col-checkbox {
+  width: 5%; /* Adjust width as needed */
+}
+
+.col-flag {
+  width: 15%; /* Adjust width as needed */
+}
+
+.col-country {
+  width: 15%; /* Adjust width as needed */
+}
+
+.col-song-info {
+  width: 50%; /* Adjust width as needed */
+}
+
+.col-points {
+  width: 15%; /* Adjust width as needed */
+}
+
+.flag-container {
+  background-color: white;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100px; /* Adjust width as needed */
+  height: 100px; /* Adjust height as needed */
+}
+
+.flag {
+  width: 80%; /* Adjust width as needed */
+  height: auto;
+  transform: scale(1.30);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scan-container {
+  display: flex;
+  align-items: center;
+}
+
+.count-container {
+  display: flex;
+  align-items: center;
+}

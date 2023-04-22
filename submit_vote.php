@@ -7,7 +7,6 @@ $collection = $mongo->eurovision->votes;
 
 // Get the submitted form data
 $name = $_POST['name'];
-$email = $_POST['email'];
 $votes = $_POST['votes'];
 
 // Check that exactly 10 countries were selected
@@ -36,7 +35,6 @@ foreach ($votes as $code) {
 // Insert the vote document into the database
 $voteDocument = array(
   'name' => $name,
-  'email' => $email,
   'votes' => $voteTotals,
   'timestamp' => new MongoDB\BSON\UTCDateTime()
 );
