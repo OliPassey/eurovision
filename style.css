@@ -82,7 +82,7 @@ input[type="submit"], button {
   border-radius: 5px;
   color: #fff;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 60px;
   padding: 10px;
 }
 
@@ -185,4 +185,14 @@ input[type="submit"]:active, button:active {
 .count-container {
   display: flex;
   align-items: center;
+}
+
+.eurovision-logo {
+  width: 85%;
+}
+
+@media (min-width: 768px) {
+  .eurovision-logo {
+    width: 600px;
+  }
 }
