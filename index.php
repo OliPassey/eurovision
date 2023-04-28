@@ -6,7 +6,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <link rel="stylesheet" type="text/css" href="style.css?v=2">
+	<link rel="stylesheet" href="style.css">
 
     <script>
     function validateForm(event) {
