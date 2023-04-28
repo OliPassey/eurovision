@@ -1,8 +1,5 @@
 # kierravision
  A vote collecting / displaying system for Eurovision Song Contest voting, at home with friends. Results page has auto-refresh option for displaying on a TV.
- 
-Update songs.csv & countries.csv to reflect this years entries.<br />
-Images may need renaming to include _'s for two word countries ie esc_unitedkingdom.png needed to become esc_united_kingdom.png
 
 ## Voting Page:
 ![image](https://user-images.githubusercontent.com/7745805/235271238-5175c4c3-a004-4edf-bcf0-3e2b57077634.png)
