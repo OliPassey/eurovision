@@ -148,7 +148,7 @@ input[type="submit"]:active, button:active {
 
 .voting-table select {
   width: 100%;
-  max-width: 100px;
+  max-width: 170px;
 }
 
 .col-checkbox {

@@ -9,15 +9,18 @@ $collection = $mongo->eurovision->votes;
 $name = $_POST['name'];
 $countryDropdowns = $_POST['country'];
 
+// Load the config file
+$config = json_decode(file_get_contents('config.json'), true);
+$pointValues = $config['pointValues'];
+
 // Calculate the vote totals for each country
 $voteTotals = array();
-foreach ($countryDropdowns as $pointValue => $countryCode) {
-  if ($countryCode !== "") {
-    if (!isset($voteTotals[$countryCode])) {
-      $voteTotals[$countryCode] = (int) $pointValue;
-    } else {
-      $voteTotals[$countryCode] += (int) $pointValue;
-    }
+foreach ($pointValues as $index => $value) {
+  $countryCode = $countryDropdowns[$index];
+  if (!isset($voteTotals[$countryCode])) {
+    $voteTotals[$countryCode] = $value;
+  } else {
+    $voteTotals[$countryCode] += $value;
   }
 }
 
