@@ -7,30 +7,34 @@ $collection = $mongo->eurovision->votes;
 
 // Get the submitted form data
 $name = $_POST['name'];
-$votes = $_POST['votes'];
+$countryDropdowns = $_POST['country'];
 
-// Check that exactly 10 countries were selected
-if (count($votes) != 10) {
-  die('Error: You must select exactly 10 countries.');
+// Check that all countries have been selected
+if (count(array_filter($countryDropdowns)) < count($countryDropdowns)) {
+  die('Error: Please vote for all countries.');
 }
 
-// Check that each point value is used only once
-$pointValues = array(12, 10, 8, 7, 6, 5, 4, 3, 2, 1);
+// Check that each country has a unique point value
+$pointValues = array_keys($countryDropdowns);
 $usedPointValues = array();
-foreach ($votes as $code) {
-  $pointValue = intval($_POST['points'][$code]);
-  if (in_array($pointValue, $usedPointValues)) {
+foreach ($pointValues as $index => $value) {
+  $usedPointValues[] = $value;
+  if (count(array_keys($usedPointValues, $value)) > 1) {
     die('Error: Each point value may only be used once.');
   }
-  $usedPointValues[] = $pointValue;
 }
 
 // Calculate the vote totals for each country
 $voteTotals = array();
-foreach ($votes as $code) {
-  $pointValue = intval($_POST['points'][$code]);
-  $voteTotals[$code] = $pointValue;
+foreach ($countryDropdowns as $code => $value) {
+  $pointValue = $pointValues[$code];
+  if (!isset($voteTotals[$value])) {
+    $voteTotals[$value] = $pointValue;
+  } else {
+    $voteTotals[$value] += $pointValue;
+  }
 }
+
 
 // Insert the vote document into the database
 $voteDocument = array(
@@ -43,5 +47,4 @@ $collection->insertOne($voteDocument);
 // Redirect to the results page
 header('Location: view_results.php');
 exit();
-
 ?>
