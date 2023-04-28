@@ -70,14 +70,21 @@
             songInfoElement.innerHTML = '';
         }
     }
-
+    document.addEventListener("DOMContentLoaded", function() {
+        const countryDropdowns = document.querySelectorAll('select[name^="country"]');
+        for (const select of countryDropdowns) {
+            select.addEventListener('change', function() {
+                displaySongInfo(this, this.name.replace('country[','').replace(']',''));
+            });
+        }
+    });
 
     </script>
 
   </head>
   <body>
     <div class="center">
-      <img src="img/ESC2023_Ukraine_LIVERPOOL_RGB_White_600px.png" width="85%">
+    <img src="img/ESC2023_Ukraine_LIVERPOOL_RGB_White_600px.png" class="eurovision-logo">
     
       <form method="POST" action="submit_vote.php" onsubmit="return validateForm(event);">
         <p>Enter your name: <input type="text" name="name"></p>
@@ -106,19 +113,21 @@
               return $value !== '0';
             });
 
-          // Display point values and dropdown menus for countries
-          foreach ($pointValues as $value) {
-            echo '<tr>';
-            echo '<td class="col-points">' . $value . '</td>';
-            echo '<td class="col-countries"><select name="country[' . $value . ']" onchange="displaySongInfo(this, ' . $value . ')">';
-            echo '<option value="">Select a country</option>';
-            foreach ($countries as $code => $data) {
-              echo '<option value="' . $code . '" data-artist="' . $data['artist'] . '" data-song="' . $data['song'] . '">' . $data['name'] . '</option>';
+            // Display point values and dropdown menus for countries
+            foreach ($pointValues as $value) {
+                echo '<tr>';
+                echo '<td class="col-points">' . $value . '</td>';
+                echo '<td class="col-countries"><select name="country[' . $value . ']" onchange="displaySongInfo(this, ' . $value . ')">';
+                echo '<option value="">Select a country</option>';
+                foreach ($countries as $code => $data) {
+                    echo '<option value="' . $code . '" data-artist="' . $data['artist'] . '" data-song="' . $data['song'] . '">' . $data['name'] . '</option>';
+                }
+                echo '</select></td>';
+                echo '<td class="col-song-info" id="song-info-' . $value . '"></td>';
+                echo '</tr>';            
             }
-            echo '</select></td>';
-            echo '<td class="col-song-info" id="song-info-' . $value . '"></td>';
-            echo '</tr>';            
-        }
+            
+
       ?>
     </table>
     <div class="center">
