@@ -156,7 +156,7 @@
       ?>
     </table>
     <div class="center">
-      <input type="submit" value="Submit your votes">
+      <input type="submit" value="Vote!">
     </div>
   </form>
 </body>
