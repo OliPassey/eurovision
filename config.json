@@ -3,5 +3,5 @@
     "database": "eurovision",
     "hostname": "vote.inadvisable.uk",
     "refreshInterval": 10,
-    "pointValues": [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12]
+    "pointValues": [1, 2, 3, 4, 5, 6, 7, 8, 10, 12]
 }
