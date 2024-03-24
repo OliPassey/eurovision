@@ -83,6 +83,10 @@ form {
   margin: 0 auto;
 }
 
+button {
+  background-color: #5c00b3;
+}
+
 input[type="text"], input[type="password"], textarea {
   background-color: #8f92bd;
   border: none;
@@ -94,7 +98,7 @@ input[type="text"], input[type="password"], textarea {
 }
 
 input[type="submit"], button {
-  background-color: #6c63ff;
+  background-color: #5c00b3;
   border: none;
   border-radius: 5px;
   color: #fff;

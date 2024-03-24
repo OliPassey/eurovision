@@ -1,17 +1,18 @@
 <?php
 require_once 'vendor/autoload.php';
 
+// Load the config file
+$config = json_decode(file_get_contents('config.json'), true);
+$pointValues = $config['pointValues'];
+
 // Connect to the MongoDB database
-$mongo = new MongoDB\Client('mongodb://10.0.3.12:27017');
-$collection = $mongo->eurovision->votes;
+// Corrected connection to MongoDB and getting the collection
+$mongo = new MongoDB\Client($config['mongodb']);
+$collection = $mongo->selectCollection($config['database'], $config['collection']);
 
 // Get the submitted form data
 $name = $_POST['name'];
 $countryDropdowns = $_POST['country'];
-
-// Load the config file
-$config = json_decode(file_get_contents('config.json'), true);
-$pointValues = $config['pointValues'];
 
 // Calculate the vote totals for each country
 $voteTotals = array();

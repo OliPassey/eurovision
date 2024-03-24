@@ -1,11 +1,29 @@
+<?php
+// Get the MongoDB connection
+// Load the config file
+$config = json_decode(file_get_contents('config.json'), true);
+$pointValues = $config['pointValues'];
+$mongo = new MongoDB\Driver\Manager($config['mongodb']);
+$databaseName = $config['database'];  // 'eurovision'
+$collectionName = $config['collection'];  // 'votes'
+$baseUrl = $config['baseUrl'];
+// URL encode the base URL to ensure it's safely included as a query parameter
+$encodedBaseUrl = urlencode($baseUrl);
+// Construct the full URL for the QR code image
+$qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . $encodedBaseUrl;
+// Generate the HTML <img> tag with the QR code URL
+$qrCodeImgTag = "<img src=\"" . $qrCodeUrl . "\"> </br>";
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Eurovision 2023 Results</title>
+    <title>Eurovision 2024 Results</title>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <div class="center">
-    <img src="img/ESC2023_Ukraine_LIVERPOOL_RGB_White_600px.png" width="700">
+    <a href="index.php"><img src="img/esc_sweden_malmo_rgb_white.png" width="700"></a>
 </div>
 <body class="dark-mode">
 <script>
@@ -28,30 +46,28 @@
 </script>
 <div class="scan2vote">
     <h1>Scan to Vote</h1>
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://eurovision.olipassey.me.uk/"> </br>
+    <?php echo '<img src="' . $qrCodeUrl . '" alt="QR Code" />';?> </br>
 </div><br>
 <button id="autoRefreshButton" onclick="toggleAutoRefresh()">Turn off auto-refresh</button>
 <h2>Who has voted:</h2>
 <?php
-// Get the MongoDB connection
-$mongo = new MongoDB\Driver\Manager('mongodb://10.0.3.12:27017');
 
 // Query for distinct voter names
 $command = new MongoDB\Driver\Command([
-    'distinct' => 'votes',
+    'distinct' => ($config['collection']),
     'key' => 'name',
 ]);
-$rows = $mongo->executeCommand('eurovision', $command);
+$rows = $mongo->executeCommand($config['database'], $command);
 $names = $rows->toArray()[0]->values;
 
 // Check if there are any votes
 $hasVotes = false;
 foreach ($names as $name) {
     $command = new MongoDB\Driver\Command([
-        'count' => 'votes',
+        'count' => ($config['collection']),
         'query' => ['name' => $name]
     ]);
-    $rows = $mongo->executeCommand('eurovision', $command);
+    $rows = $mongo->executeCommand($config['database'], $command);
     $count = $rows->toArray()[0]->n;
     if ($count > 0) {
         $hasVotes = true;
@@ -84,18 +100,22 @@ foreach ($csv as $row) {
     $countryCode = $row[1];
     $votesByCountry[$countryName] = array(
         'code' => $countryCode,
-        'votes' => 0
+        ($config['collection']) => 0
     );
 }
 
+
+
+$namespace = $databaseName . '.' . $collectionName;
+
 // Query for all votes
 $query = new MongoDB\Driver\Query([]);
-$rows = $mongo->executeQuery('eurovision.votes', $query);
+$rows = $mongo->executeQuery($namespace, $query);
 
 foreach ($rows as $row) {
     foreach ($row->votes as $countryCode => $numVotes) {
         $countryName = $csv[array_search($countryCode, array_column($csv, 1))][0];
-        $votesByCountry[$countryName]['votes'] += $numVotes;
+        $votesByCountry[$countryName][$collectionName] += $numVotes;
     }
 }
 

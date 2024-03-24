@@ -1,7 +1,10 @@
+
+
+
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Eurovision 2023 Voting</title>
+    <title>Eurovision 2024 Voting</title>
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -9,7 +12,14 @@
     <link rel="stylesheet" type="text/css" href="style.css?v=2">
 
     <script>
+    var isFormConfirmed = false;
     function validateForm(event) {
+        event.preventDefault(); // Always prevent default submission initially
+
+        if (isFormConfirmed) {
+            return true; // This allows the form to submit after confirmation
+        }
+
         const form = event.currentTarget;
         const nameInput = form.querySelector('input[name="name"]');
         const countryDropdowns = form.querySelectorAll('select[name^="country"]');
@@ -17,33 +27,83 @@
 
         // Validate name input
         if (nameInput.value.trim() === '') {
-        alert('Please enter your name.');
-        event.preventDefault();
-        return false;
+            showMessage('Please enter your name.');
+            return false;
         }
 
         // Validate unique country selection
         for (const select of countryDropdowns) {
-        const countryCode = select.value;
-        if (countryCode !== "") {
-            if (usedCountryCodes.has(countryCode)) {
-            alert('Each country can only be selected once. You have selected a country more than once.');
-            event.preventDefault();
-            return false;
+            const countryCode = select.value;
+            if (countryCode !== "") {
+                if (usedCountryCodes.has(countryCode)) {
+                    showMessage('Each country can only be selected once. You have selected a country more than once.');
+                    return false;
+                }
+                usedCountryCodes.add(countryCode);
             }
-            usedCountryCodes.add(countryCode);
-        }
         }
 
         // Validate that all countries have been selected
         if (usedCountryCodes.size !== countryDropdowns.length) {
-        alert('Please vote for all countries.');
-        event.preventDefault();
-        return false;
+            showMessage('Please vote for all countries.');
+            return false;
         }
 
-        return true;
+        // If all validations pass, show a confirmation message
+        showMessage('Confirm your vote?', true);
     }
+
+    function showMessage(message, isConfirmation = false) {
+        var messageContainer = document.getElementById('message');
+        messageContainer.innerHTML = message; // Reset the initial message
+
+        if (isConfirmation) {
+            // Reset and construct the votes summary more reliably
+            const form = document.querySelector('form');
+            const nameInput = form.querySelector('input[name="name"]').value.trim();
+            const countryDropdowns = form.querySelectorAll('select[name^="country"]');
+            let votesSummary = '<h3>Your Votes:</h3>';
+            votesSummary += `<p><strong>Voter Name:</strong> ${nameInput}</p>`;
+            votesSummary += '<ul>';
+
+            countryDropdowns.forEach(dropdown => {
+                if (dropdown.value) {
+                    const points = dropdown.getAttribute('data-point-value');
+                    const selectedOption = dropdown.options[dropdown.selectedIndex];
+                    const artist = selectedOption.getAttribute('data-artist');
+                    const song = selectedOption.getAttribute('data-song');
+                    const countryName = selectedOption.text.split(' - ')[0]; // Make sure this split logic matches the actual text format
+
+                    votesSummary += `<li>${points} points to ${countryName} (Artist: ${artist}, Song: ${song})</li>`;
+                }
+            });
+
+            votesSummary += '</ul>';
+            messageContainer.innerHTML += votesSummary; // Append the votes summary
+        }
+
+        // Display the overlay and conditional confirmation button
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('confirmButton').style.display = isConfirmation ? 'inline-block' : 'none';
+    }
+
+
+
+
+
+
+    function hideOverlay() {
+        document.getElementById('overlay').style.display = 'none';
+    }
+
+    function submitForm() {
+        isFormConfirmed = true;
+        document.querySelector('form').submit();
+    }
+
+
+
+
 
 
     function displaySongInfo(selectElement) {
@@ -103,12 +163,13 @@
   </head>
   <body>
     <div class="center">
-    <img src="img/ESC2023_Ukraine_LIVERPOOL_RGB_White_600px.png" class="eurovision-logo">
-    
+    <img src="img/esc_sweden_malmo_rgb_white.png" class="eurovision-logo"><br>
+    <a href="view_results.php">Show me the results!</a>
       <form method="POST" action="submit_vote.php" onsubmit="return validateForm(event);">
         <p>Enter your name: <input type="text" name="name"></p>
         <p>Please enter your votes and hit submit!</p>
         <p>You must select a country for every row before submitting</p>
+        <p>Note the top row is 12 points, ie your winner!</p>
     </div>
         <table class="voting-table">
           <tr>
@@ -145,8 +206,8 @@
                 echo '<td class="col-countries"><select name="country[]" onchange="displaySongInfo(this, ' . $value . ')" data-point-value="' . $value . '">';
                 echo '<option value="">Select a country</option>';
                 foreach ($countries as $code => $data) {
-                    echo '<option value="' . $code . '" data-artist="' . $data['artist'] . '" data-song="' . $data['song'] . '">' . $data['name'] . '</option>';
-                }
+                  echo '<option value="' . $code . '" data-artist="' . $data['artist'] . '" data-song="' . $data['song'] . '">' . $data['name'] . ' - ' . $data['song'] . '</option>';
+              }              
                 echo '</select></td>';
                 echo '<td class="col-song-info" id="song-info-' . $value . '"></td>';
                 echo '</tr>';            
@@ -159,5 +220,14 @@
       <input type="submit" value="Vote!">
     </div>
   </form>
+  <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+    <div style="background:#fff; margin:10% auto; padding:20px; width:80%; max-width:400px;">
+        <div id="message"></div>
+        <button id="confirmButton" onclick="submitForm()">Confirm</button>
+        <button onclick="hideOverlay()">Cancel</button>
+    </div>
+</div>
+
+
 </body>
 </html>
