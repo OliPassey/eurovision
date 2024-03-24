@@ -1,4 +1,4 @@
-# kierravision
+# eurovision
  A vote collecting / displaying system for Eurovision Song Contest voting, at home with friends. Results page has auto-refresh option for displaying on a TV.
 
 ## Voting Page:
