@@ -13,136 +13,144 @@
 
     <script>
     var isFormConfirmed = false;
+
     function validateForm(event) {
-        event.preventDefault(); // Always prevent default submission initially
+    event.preventDefault(); // Always prevent default submission initially
 
-        if (isFormConfirmed) {
-            return true; // This allows the form to submit after confirmation
-        }
+    if (isFormConfirmed) {
+        return true; // This allows the form to submit after confirmation
+    }
 
-        const form = event.currentTarget;
-        const nameInput = form.querySelector('input[name="name"]');
-        const countryDropdowns = form.querySelectorAll('select[name^="country"]');
-        const usedCountryCodes = new Set();
+    const form = event.currentTarget;
+    const nameInput = form.querySelector('input[name="name"]').value; // Retrieve the value directly
+    const countryDropdowns = form.querySelectorAll('select[name^="country"]');
+    const usedCountryCodes = new Set();
 
-        // Validate name input
-        if (nameInput.value.trim() === '') {
-            showMessage('Please enter your name.');
-            return false;
-        }
+    // Validate name input
+    if (nameInput.trim() === '') {
+        showMessage('Please enter your name.');
+        return false;
+    }
 
-        // Validate unique country selection
-        for (const select of countryDropdowns) {
-            const countryCode = select.value;
-            if (countryCode !== "") {
-                if (usedCountryCodes.has(countryCode)) {
-                    showMessage('Each country can only be selected once. You have selected a country more than once.');
-                    return false;
-                }
-                usedCountryCodes.add(countryCode);
+    // Validate unique country selection
+    for (const select of countryDropdowns) {
+        const countryCode = select.value;
+        if (countryCode !== "") {
+            if (usedCountryCodes.has(countryCode)) {
+                showMessage('Each country can only be selected once. You have selected a country more than once.');
+                return false;
             }
+            usedCountryCodes.add(countryCode);
         }
-
-        // Validate that all countries have been selected
-        if (usedCountryCodes.size !== countryDropdowns.length) {
-            showMessage('Please vote for all countries.');
-            return false;
-        }
-
-        // If all validations pass, show a confirmation message
-        showMessage('Confirm your vote?', true);
     }
 
-    function showMessage(message, isConfirmation = false) {
-        var messageContainer = document.getElementById('message');
-        messageContainer.innerHTML = message; // Reset the initial message
-
-        if (isConfirmation) {
-            // Reset and construct the votes summary more reliably
-            const form = document.querySelector('form');
-            const nameInput = form.querySelector('input[name="name"]').value.trim();
-            const countryDropdowns = form.querySelectorAll('select[name^="country"]');
-            let votesSummary = '<h3>Your Votes:</h3>';
-            votesSummary += `<p><strong>Voter Name:</strong> ${nameInput}</p>`;
-            votesSummary += '<ul>';
-
-            countryDropdowns.forEach(dropdown => {
-                if (dropdown.value) {
-                    const points = dropdown.getAttribute('data-point-value');
-                    const selectedOption = dropdown.options[dropdown.selectedIndex];
-                    const artist = selectedOption.getAttribute('data-artist');
-                    const song = selectedOption.getAttribute('data-song');
-                    const countryName = selectedOption.text.split(' - ')[0]; // Make sure this split logic matches the actual text format
-
-                    votesSummary += `<li>${points} points to ${countryName} (Artist: ${artist}, Song: ${song})</li>`;
-                }
-            });
-
-            votesSummary += '</ul>';
-            messageContainer.innerHTML += votesSummary; // Append the votes summary
-        }
-
-        // Display the overlay and conditional confirmation button
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('confirmButton').style.display = isConfirmation ? 'inline-block' : 'none';
+    // Validate that all countries have been selected
+    if (usedCountryCodes.size !== countryDropdowns.length) {
+        showMessage('Please vote for all countries.');
+        return false;
     }
 
+    // Call showMessage with nameInput, countryDropdowns, and messageContainer as parameters
+    showMessage('Confirm your vote?', document.getElementById('message'), true, nameInput, countryDropdowns);
+
+    // Log the values for troubleshooting
+    console.log('Name:', nameInput);
+    console.log('Selected countries:', countryDropdowns);
+    console.log('Used CCs:', usedCountryCodes);
+
+    return false; // Prevent default form submission
+}
 
 
+function showMessage(message, messageContainer, isConfirmation = false, nameInput, countryDropdowns) {
+    // Log the values for troubleshooting
+    console.log('Confirmation message:', message);
+    console.log('Is confirmation:', isConfirmation);
+    console.log('Name:', nameInput);
+    console.log('Selected countries:', countryDropdowns);
 
+    messageContainer.innerHTML = message; // Reset the initial message
 
+    if (isConfirmation) {
+        // Construct the votes summary
+        let votesSummary = '<h3>Your Votes:</h3>';
+        votesSummary += `<p><strong>Voter Name:</strong> ${nameInput}</p>`; // Use nameInput.value instead of nameInput
+        votesSummary += '<ul>';
 
-    function hideOverlay() {
-        document.getElementById('overlay').style.display = 'none';
+        Array.from(countryDropdowns).forEach(dropdown => {
+            if (dropdown.value) {
+                const points = dropdown.getAttribute('data-point-value');
+                const selectedOption = dropdown.options[dropdown.selectedIndex];
+                const artist = selectedOption.getAttribute('data-artist');
+                const song = selectedOption.getAttribute('data-song');
+                const countryName = selectedOption.text.split(' - ')[0]; // Make sure this split logic matches the actual text format
+
+                votesSummary += `<li>${points} points to ${countryName} (Artist: ${artist}, Song: ${song})</li>`;
+            }
+        });
+
+        votesSummary += '</ul>';
+
+        // Append the votes summary to the message container
+        messageContainer.innerHTML += votesSummary;
+
+        // Log the constructed vote summary
+        console.log('Vote summary:', votesSummary);
     }
 
-    function submitForm() {
-        isFormConfirmed = true;
-        document.querySelector('form').submit();
-    }
+    // Display the overlay and conditional confirmation button
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('confirmButton').style.display = isConfirmation ? 'inline-block' : 'none';
+}
 
+function hideOverlay() {
+    document.getElementById('overlay').style.display = 'none';
+}
 
+function submitForm() {
+    isFormConfirmed = true;
+    document.querySelector('form').submit();
+}
 
+function displaySongInfo(selectElement) {
+    const selectedIndex = selectElement.selectedIndex;
+    const countryCode = selectElement.value;
+    const pointValue = selectElement.getAttribute('data-point-value');
+    const artist = selectElement.options[selectedIndex].getAttribute('data-artist');
+    const song = selectElement.options[selectedIndex].getAttribute('data-song');
+    const songInfoElement = document.getElementById('song-info-' + pointValue);
+    const allCountryDropdowns = document.getElementsByName('country[]');
 
-
-
-    function displaySongInfo(selectElement) {
-        const selectedIndex = selectElement.selectedIndex;
-        const countryCode = selectElement.value;
-        const pointValue = selectElement.getAttribute('data-point-value');
-        const artist = selectElement.options[selectedIndex].getAttribute('data-artist');
-        const song = selectElement.options[selectedIndex].getAttribute('data-song');
-        const songInfoElement = document.getElementById('song-info-' + pointValue);
-        const allCountryDropdowns = document.getElementsByName('country[]');
-
-        // Check if the country has already been voted for in another point value
-        for (let i = 0; i < allCountryDropdowns.length; i++) {
-            const otherPointValue = allCountryDropdowns[i].getAttribute('data-point-value');
-            if (otherPointValue != pointValue && allCountryDropdowns[i].value === countryCode) {
+    // Check if the country has already been voted for in another point value
+    for (let i = 0; i < allCountryDropdowns.length; i++) {
+        const otherPointValue = allCountryDropdowns[i].getAttribute('data-point-value');
+        if (otherPointValue != pointValue && allCountryDropdowns[i].value === countryCode) {
             alert('You have already voted for this country.');
             selectElement.selectedIndex = 0;
             songInfoElement.innerHTML = '';
             return;
-            }
-        }
-
-        // Update the song info display
-        if (artist && song) {
-            songInfoElement.innerHTML = '<strong>Artist:</strong> ' + artist + '<br><strong>Song:</strong> ' + song;
-        } else {
-            songInfoElement.innerHTML = '';
         }
     }
 
+    // Update the song info display
+    if (artist && song) {
+        songInfoElement.innerHTML = '<strong>Artist:</strong> ' + artist + '<br><strong>Song:</strong> ' + song;
+    } else {
+        songInfoElement.innerHTML = '';
+    }
+}
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const countryDropdowns = document.querySelectorAll('select[name^="country"]');
-        for (const select of countryDropdowns) {
-            select.addEventListener('change', function() {
-                displaySongInfo(this, this.name.replace('country[','').replace(']',''));
-            });
-        }
-    });
+document.addEventListener("DOMContentLoaded", function() {
+    console.log('DOM fully loaded and parsed');
+
+    const countryDropdowns = document.querySelectorAll('select[name^="country"]');
+    for (const select of countryDropdowns) {
+        select.addEventListener('change', function() {
+            displaySongInfo(this, this.name.replace('country[','').replace(']',''));
+        });
+    }
+});
+
 
     </script>
   <!-- Matomo -->
@@ -221,7 +229,7 @@
     </div>
   </form>
   <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
-    <div style="background:#fff; margin:10% auto; padding:20px; width:80%; max-width:400px;">
+    <div style="background:#6e2cb0; margin:10% auto; padding:20px; width:80%; max-width:400px;">
         <div id="message"></div>
         <button id="confirmButton" onclick="submitForm()">Confirm</button>
         <button onclick="hideOverlay()">Cancel</button>
