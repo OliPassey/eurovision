@@ -34,6 +34,6 @@ $voteDocument = array(
 $collection->insertOne($voteDocument);
 
 // Redirect to the results page
-header('Location: view_results.php');
+header('Location: thanks.php');
 exit();
 ?>

@@ -89,40 +89,39 @@ if (file_exists($configFilePath)) {
             const nameInput = form.querySelector('input[name="name"]').value.trim();
             const countryDropdowns = form.querySelectorAll('select[name^="country"]');
             const usedCountryCodes = new Set();
-            let isValid = true;
+            let hasEmpty = false;
 
             if (nameInput === '') {
                 alert('Please enter your name.');
                 return false; // Stop the form submission
             }
 
-            // Validate unique country selection
-            countryDropdowns.forEach(select => {
+            // Check for unselected countries and duplicate selections
+            for (let select of countryDropdowns) {
                 const countryCode = select.value;
-                if (countryCode !== "") {
+                if (countryCode === "") {
+                    hasEmpty = true; // Set flag if any dropdown is unselected
+                } else {
                     if (usedCountryCodes.has(countryCode)) {
                         alert('Each country can only be selected once. You have selected a country more than once.');
-                        isValid = false;
-                        return;
+                        return false; // This stops the form submission early
                     }
                     usedCountryCodes.add(countryCode);
-                } else {
-                    // This checks if any dropdown is left unselected
-                    alert('Please vote for all countries.');
-                    isValid = false;
-                    return;
                 }
-            });
-
-            if (isValid && !isFormConfirmed) {
-                // Only show the overlay if form is not yet confirmed
-                showMessage('Confirm your vote?', true, nameInput, countryDropdowns);
-            } else if (isFormConfirmed) {
-                // Proceed to submit if already confirmed
-                return true;
             }
 
-            return false; // Prevent form submission if not confirmed
+            if (hasEmpty) {
+                alert('Please vote for all countries.');
+                return false; // This stops the form submission early if any country is not selected
+            }
+
+            if (!isFormConfirmed) {
+                // Only show the overlay if form is not yet confirmed
+                showMessage('Confirm your vote?', true, nameInput, countryDropdowns);
+                return false; // Prevent form submission if not confirmed
+            }
+
+            return true; // Proceed to submit if already confirmed
         }
 
         function showMessage(message, isConfirmation = false, nameInput, countryDropdowns) {
@@ -131,7 +130,6 @@ if (file_exists($configFilePath)) {
 
             if (isConfirmation) {
                 let votesSummary = '<h3>Your Votes:</h3><ul>';
-
                 countryDropdowns.forEach(dropdown => {
                     const points = dropdown.getAttribute('data-point-value');
                     const selectedOption = dropdown.options[dropdown.selectedIndex];
@@ -160,7 +158,6 @@ if (file_exists($configFilePath)) {
             document.getElementById('votingForm').submit();
         }
 
-        // Modify your form's onsubmit attribute to call validateForm and prevent default if it returns false
         document.getElementById('votingForm').onsubmit = function(event) {
             if (!validateForm()) {
                 event.preventDefault(); // Prevent form submission
@@ -176,10 +173,9 @@ if (file_exists($configFilePath)) {
             const songInfoElement = document.getElementById('song-info-' + pointValue);
             const allCountryDropdowns = document.getElementsByName('country[]');
 
-            // Check if the country has already been voted for in another point value
+            // Clear previous selections if the same country is selected elsewhere
             for (let i = 0; i < allCountryDropdowns.length; i++) {
-                const otherPointValue = allCountryDropdowns[i].getAttribute('data-point-value');
-                if (otherPointValue != pointValue && allCountryDropdowns[i].value === countryCode) {
+                if (allCountryDropdowns[i] !== selectElement && allCountryDropdowns[i].value === countryCode) {
                     alert('You have already voted for this country.');
                     selectElement.selectedIndex = 0;
                     songInfoElement.innerHTML = '';
@@ -188,13 +184,11 @@ if (file_exists($configFilePath)) {
             }
 
             // Update the song info display
-            if (artist && song) {
-                songInfoElement.innerHTML = '<strong>Artist:</strong> ' + artist + '<br><strong>Song:</strong> ' + song;
-            } else {
-                songInfoElement.innerHTML = '';
-            }
+            songInfoElement.innerHTML = artist && song ? '<strong>Artist:</strong> ' + artist + '<br><strong>Song:</strong> ' + song : '';
         }
     </script>
+
+
 
 </body>
 </html>

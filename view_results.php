@@ -22,9 +22,7 @@ $qrCodeImgTag = "<img src=\"" . $qrCodeUrl . "\"> </br>";
     <title>Eurovision 2024 Results</title>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-<div class="center">
-    <a href="index.php"><img src="img/esc_sweden_malmo_rgb_white.png" width="700"></a>
-</div>
+
 <body class="dark-mode">
 <script>
     var autoRefresh = true;
@@ -44,14 +42,8 @@ $qrCodeImgTag = "<img src=\"" . $qrCodeUrl . "\"> </br>";
 
     setInterval(checkAutoRefresh, 5000);
 </script>
-<div class="scan2vote">
-    <h1>Scan to Vote</h1>
-    <?php echo '<img src="' . $qrCodeUrl . '" alt="QR Code" />';?> </br>
-</div><br>
-<button id="autoRefreshButton" onclick="toggleAutoRefresh()">Turn off auto-refresh</button>
-<h2>Who has voted:</h2>
-<?php
 
+<?php
 // Query for distinct voter names
 $command = new MongoDB\Driver\Command([
     'distinct' => ($config['collection']),
@@ -85,7 +77,14 @@ foreach ($names as $i => $name) {
     echo $name;
 }
     echo '</div>';
-
+?>
+<div class="center">
+    <a href="index.php"><img src="img/esc_sweden_malmo_rgb_white.png" width="500"></a>
+</div>
+<div class="scan2vote">
+    <?php echo '<img src="' . $qrCodeUrl . '" alt="QR Code" />';?> </br>
+</div>
+<?php
 // Display the results section
 if ($hasVotes) {
     echo '<div class="center">';
@@ -180,6 +179,7 @@ echo '</div>';
     ?>
 </table>
 
+<button id="autoRefreshButton" onclick="toggleAutoRefresh()">Turn off auto-refresh</button>
 
 </body>
 </html>
