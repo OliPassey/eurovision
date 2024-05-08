@@ -2,7 +2,6 @@
 // Get the MongoDB connection
 // Load the config file
 $config = json_decode(file_get_contents('config.json'), true);
-$pointValues = $config['pointValues'];
 $mongo = new MongoDB\Driver\Manager($config['mongodb']);
 $databaseName = $config['database'];  // 'eurovision'
 $collectionName = $config['collection'];  // 'votes'
@@ -46,20 +45,20 @@ $qrCodeImgTag = "<img src=\"" . $qrCodeUrl . "\"> </br>";
 <?php
 // Query for distinct voter names
 $command = new MongoDB\Driver\Command([
-    'distinct' => ($config['collection']),
+    'distinct' => $collectionName,
     'key' => 'name',
 ]);
-$rows = $mongo->executeCommand($config['database'], $command);
+$rows = $mongo->executeCommand($databaseName, $command);
 $names = $rows->toArray()[0]->values;
 
 // Check if there are any votes
 $hasVotes = false;
 foreach ($names as $name) {
     $command = new MongoDB\Driver\Command([
-        'count' => ($config['collection']),
+        'count' => $collectionName,
         'query' => ['name' => $name]
     ]);
-    $rows = $mongo->executeCommand($config['database'], $command);
+    $rows = $mongo->executeCommand($databaseName, $command);
     $count = $rows->toArray()[0]->n;
     if ($count > 0) {
         $hasVotes = true;
@@ -69,59 +68,72 @@ foreach ($names as $name) {
 
 // Display the list of voters
 echo '<div class="voters">';
-echo '<strong></strong> ';
+echo '<strong>Voters: </strong>';
 foreach ($names as $i => $name) {
     if ($i > 0) {
         echo ', ';
     }
     echo $name;
 }
-    echo '</div>';
+echo '</div>';
 ?>
 <div class="center">
     <a href="index.php"><img src="img/esc_sweden_malmo_rgb_white.png" width="500"></a>
 </div>
 <div class="scan2vote">
-    <?php echo '<img src="' . $qrCodeUrl . '" alt="QR Code" />';?> </br>
+    <?php echo $qrCodeImgTag; ?> </br>
 </div>
 <?php
 // Display the results section
 if ($hasVotes) {
     echo '<div class="center">';
-    echo '<h1></h1>';
+    echo '<h1>Eurovision Voting Results</h1>';
 
-// Group votes by country
+// Load data from songs.csv and initialize the votesByCountry array
 $votesByCountry = array();
 $csv = array_map('str_getcsv', file('songs.csv'));
-array_shift($csv);
+array_shift($csv); // Remove header line to skip the titles
 foreach ($csv as $row) {
     $countryName = $row[0];
     $countryCode = $row[1];
+    $artist = $row[2]; // Artist's name is in the third column
+    $songTitle = $row[3]; // Song title is in the fourth column
     $votesByCountry[$countryName] = array(
-        'code' => $countryCode,
-        ($config['collection']) => 0
+        'code' => strtolower($countryCode), // Ensure code is lowercase
+        'song' => $songTitle,
+        'artist' => $artist,
+        'votes' => 0
     );
 }
 
-
-
+// Process votes and store in votesByCountry as before
 $namespace = $databaseName . '.' . $collectionName;
-
-// Query for all votes
 $query = new MongoDB\Driver\Query([]);
 $rows = $mongo->executeQuery($namespace, $query);
-
 foreach ($rows as $row) {
     foreach ($row->votes as $countryCode => $numVotes) {
-        $countryName = $csv[array_search($countryCode, array_column($csv, 1))][0];
-        $votesByCountry[$countryName][$collectionName] += $numVotes;
+        $index = array_search($countryCode, array_column($csv, 1));
+        $countryName = $csv[$index][0];
+        $votesByCountry[$countryName]['votes'] += $numVotes;
     }
 }
 
-// Sort the countries by number of votes
+// Sort countries by votes in descending order
 uasort($votesByCountry, function($a, $b) {
     return $b['votes'] - $a['votes'];
 });
+
+// Prepare data for JSON output and save to results.json
+$jsonData = array();
+foreach ($votesByCountry as $countryName => $countryData) {
+    array_push($jsonData, array(
+        "country" => $countryName, 
+        "points" => $countryData['votes'],
+        "song" => $countryData['song'],
+        "artist" => $countryData['artist']
+    ));
+}
+file_put_contents('results.json', json_encode($jsonData, JSON_PRETTY_PRINT));
 
 // Display the top three positions with flags
 echo '<div class="top-results">';
@@ -161,7 +173,6 @@ if (count($votesByCountry) > 2) {
 echo '</div>';
 echo '</div>';
 ?>
-
 <table>
     <tr>
         <th>Country</th>
@@ -171,9 +182,8 @@ echo '</div>';
     // Display the rest of the results table
     foreach ($votesByCountry as $countryName => $countryData) {
         echo '<tr>';
-        $flagSrc = "img/flags/" . strtolower($countryData['code']) . ".png";
-        echo '<td><img src="' . $flagSrc . '" width="30" height="20" /> ' . $countryName . '</td>';
-        echo '<td>' . $countryData['votes'] . '</td>';
+        echo '<td><img src="img/flags/' . htmlspecialchars($countryData['code']) . '.png" width="30" height="20" /> ' . htmlspecialchars($countryName) . '</td>';
+        echo '<td>' . htmlspecialchars($countryData['votes']) . '</td>';
         echo '</tr>';
     }
     ?>
@@ -187,5 +197,6 @@ echo '</div>';
 echo '</div>';
 } else {
     echo '<style>.top-results { display: none; }</style>';
+    echo '<p>No votes have been recorded yet.</p>';
 }
-
+?>

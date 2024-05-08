@@ -9,3 +9,4 @@
     <h1>Thanks for voting, results are on the tele!</h1>
     <iframe src="https://giphy.com/embed/YnkgM4nZVRNfV4mQ7B" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 </div>
+<a href="ttresults2.php"><img src="img/egg.png" width="40px"></a>
