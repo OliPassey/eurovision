@@ -10,10 +10,10 @@ As you select countries for the vote, the song is displayed:
 ## Results Page:
 ![image](https://user-images.githubusercontent.com/7745805/235271317-3150db75-655f-4856-840f-3ca03e94338e.png)
 
-## requires <br />
-mongodb <br />
-php 8.1 <br />
-working webserver <br />
-composer install  <br />
-update "mongodb://10.0.3.12:27017" to reflect your server in submit_vote.php & view_results.php <br />
-purple is the way forward. <br />
+## Install / Docker:
+System is designed to be run in Docker olipassey/eurovision  
+You must have MongoDB running elsewhere in your network 
+config.json should be held externally and path'd in to /var/www/html/config.json 
+
+## Results
+view_results.php should be running / displayed on a large screen whilst people are voting, and left open. There are a couple of easter egg leaderboards available, but they require view_results.php to be open and running for data
