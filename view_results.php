@@ -123,18 +123,6 @@ uasort($votesByCountry, function($a, $b) {
     return $b['votes'] - $a['votes'];
 });
 
-// Prepare data for JSON output and save to results.json
-$jsonData = array();
-foreach ($votesByCountry as $countryName => $countryData) {
-    array_push($jsonData, array(
-        "country" => $countryName, 
-        "points" => $countryData['votes'],
-        "song" => $countryData['song'],
-        "artist" => $countryData['artist']
-    ));
-}
-file_put_contents('results.json', json_encode($jsonData, JSON_PRETTY_PRINT));
-
 // Display the top three positions with flags
 echo '<div class="top-results">';
 echo '<div class="top-3">';
