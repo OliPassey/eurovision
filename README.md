@@ -16,4 +16,4 @@ You must have MongoDB running elsewhere in your network
 config.json should be held externally and path'd in to /var/www/html/config.json 
 
 ## Results
-view_results.php should be running / displayed on a large screen whilst people are voting, and left open. There are a couple of easter egg leaderboards available, but they require view_results.php to be open and running for data
+view_results.php should be running / displayed on a large screen whilst people are voting, and left open. There are a couple of easter egg leaderboards available.
